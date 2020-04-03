@@ -13,6 +13,7 @@
 		E09A3ECF2437BFF4009D23C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E09A3ECE2437BFF4009D23C4 /* Assets.xcassets */; };
 		E09A3ED22437BFF4009D23C4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E09A3ED12437BFF4009D23C4 /* Preview Assets.xcassets */; };
 		E09A3ED52437BFF4009D23C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E09A3ED32437BFF4009D23C4 /* LaunchScreen.storyboard */; };
+		E09A3EDD2437C04E009D23C4 /* Gitlab_configs.plist in Resources */ = {isa = PBXBuildFile; fileRef = E09A3EDC2437C04E009D23C4 /* Gitlab_configs.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		E09A3ED12437BFF4009D23C4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E09A3ED42437BFF4009D23C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E09A3ED62437BFF4009D23C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E09A3EDC2437C04E009D23C4 /* Gitlab_configs.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Gitlab_configs.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				E09A3ED32437BFF4009D23C4 /* LaunchScreen.storyboard */,
 				E09A3ED62437BFF4009D23C4 /* Info.plist */,
 				E09A3ED02437BFF4009D23C4 /* Preview Content */,
+				E09A3EDC2437C04E009D23C4 /* Gitlab_configs.plist */,
 			);
 			path = "Gitlab Viewer";
 			sourceTree = "<group>";
@@ -85,6 +88,7 @@
 				E09A3EC12437BFF4009D23C4 /* Sources */,
 				E09A3EC22437BFF4009D23C4 /* Frameworks */,
 				E09A3EC32437BFF4009D23C4 /* Resources */,
+				E09A3EDE2437C0DD009D23C4 /* Setup Gitlab config */,
 			);
 			buildRules = (
 			);
@@ -135,11 +139,34 @@
 			files = (
 				E09A3ED52437BFF4009D23C4 /* LaunchScreen.storyboard in Resources */,
 				E09A3ED22437BFF4009D23C4 /* Preview Assets.xcassets in Resources */,
+				E09A3EDD2437C04E009D23C4 /* Gitlab_configs.plist in Resources */,
 				E09A3ECF2437BFF4009D23C4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E09A3EDE2437C0DD009D23C4 /* Setup Gitlab config */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PRODUCT_NAME)/Gitlab_configs.plist",
+			);
+			name = "Setup Gitlab config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Look for a file named .gitlab-configs in the project directory\nconfigs=.gitlab-configs.yml\nconfigs=\"$(sed -e 's/:[^:\\/\\/]/=/g;s/$//g;s/ *=/=/g' .gitlab-configs.yml | tee /tmp/exportable_config.txt)\"\nif [ \"$configs\" ]; then\n  awk '{print $1}' /tmp/exportable_config.txt | while read config\n  do\n    KEY_NAME=\"$(echo $config | awk -F '=' '{ print $1 } ')\"\n    VALUE=\"$(echo $config | awk -F '=' '{ print $2} ')\"\n    plutil -replace $KEY_NAME -string $VALUE \"$TARGET_BUILD_DIR/$FULL_PRODUCT_NAME/Gitlab_configs.plist\"\n  done\nelse\n  echo 'warning: Missing Gitlab configs file'\n  echo \"warning: create a .gitlab-config file\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E09A3EC12437BFF4009D23C4 /* Sources */ = {

@@ -87,7 +87,10 @@ struct ProjectsList: View {
                 }
             }
             if self.isLoading {
-                Text("Loading more projects...")
+                HStack {
+                    Text("Loading more projects...")
+                    ActivityIndicator(isAnimating: $isLoading, style: .medium)
+                }
             }
             if self.allProjectsLoaded() {
                 Text("Fetched all projects, no more to fetch")

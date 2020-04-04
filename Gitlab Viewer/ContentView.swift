@@ -71,6 +71,7 @@ struct ProjectDetailsView: View {
 
 struct ProjectsList: View {
     @State private var projects: [Project] = []
+    @State private var nextPageLink: String?
     let gitlabConfig: GitlabConfig
     let group: Int?
 
@@ -80,6 +81,9 @@ struct ProjectsList: View {
                 NavigationLink(destination: ProjectDetailsView(project: project, gitlabConfig: self.gitlabConfig)) {
                     Text(project.name)
                 }
+                .onAppear {
+                    self.listItemDidAppear(project)
+                }
             }
         }
         .onAppear {
@@ -88,13 +92,29 @@ struct ProjectsList: View {
         .navigationBarTitle("Projects")
     }
 
-    func loadData() {
+    // inspired from https://medium.com/better-programming/meet-greet-list-pagination-in-swiftui-8330ee15fd61
+    private func listItemDidAppear(_ item: Project) {
+        if self.projects.isLast(item: item) {
+            self.loadData()
+        }
+    }
+
+    private func allProjectsLoaded() -> Bool {
+        return self.nextPageLink == nil && self.projects.count > 0
+    }
+
+    private func loadData() {
+        guard !allProjectsLoaded() else {
+            return
+        }
         let urlString: String
-        if let groupId = self.group {
-            urlString = "\(self.gitlabConfig.baseURL)/groups/\(groupId)/projects"
+        if let nextPageLink = self.nextPageLink {
+            urlString = nextPageLink
+        } else if let groupId = self.group {
+            urlString = "\(self.gitlabConfig.baseURL)/groups/\(groupId)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         } else {
             // default to all projects if groupId does not exist
-            urlString = "\(self.gitlabConfig.baseURL)/projects"
+            urlString = "\(self.gitlabConfig.baseURL)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         }
         guard let url = URL(string: urlString) else {
             assertionFailure("Invalid url")
@@ -111,13 +131,28 @@ struct ProjectsList: View {
             let decoder = JSONDecoder()
             do {
                 let projects = try decoder.decode([Project].self, from: dataU)
+                var nextPageLink: String?
+                if let httpResponse = response as? HTTPURLResponse,
+                    let linkHeader = httpResponse.allHeaderFields["Link"] as? String {
+                    nextPageLink = self.getNextPageLink(from: linkHeader)
+                }
                 DispatchQueue.main.async {
-                    self.projects = projects
+                    self.projects.append(contentsOf: projects)
+                    self.nextPageLink = nextPageLink
                 }
             } catch let error {
                 print(error)
             }
         }.resume()
+    }
+
+    private func getNextPageLink(from header: String) -> String? {
+        let splitHeaderArray = header.split(separator: ",")
+        guard let nextURLIndex = splitHeaderArray.firstIndex(where: { (string) in return string.contains("rel=\"next\"") }),
+            let nextPageLink = splitHeaderArray[nextURLIndex].split(separator: ";").first?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).trimmingCharacters(in: CharacterSet.init(charactersIn: "<>")) else {
+            return nil
+        }
+        return nextPageLink
     }
 }
 

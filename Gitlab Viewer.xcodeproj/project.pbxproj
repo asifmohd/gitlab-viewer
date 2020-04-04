@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E09675782438DCD7001E6BB5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09675772438DCD7001E6BB5 /* Extensions.swift */; };
 		E09A3EC92437BFF4009D23C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */; };
 		E09A3ECB2437BFF4009D23C4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A3ECA2437BFF4009D23C4 /* SceneDelegate.swift */; };
 		E09A3ECD2437BFF4009D23C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A3ECC2437BFF4009D23C4 /* ContentView.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E09675772438DCD7001E6BB5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E09A3EC52437BFF4009D23C4 /* Gitlab Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gitlab Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E09A3ECA2437BFF4009D23C4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 				E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */,
 				E09A3ECA2437BFF4009D23C4 /* SceneDelegate.swift */,
 				E09A3ECC2437BFF4009D23C4 /* ContentView.swift */,
+				E09675772438DCD7001E6BB5 /* Extensions.swift */,
 				E09A3ECE2437BFF4009D23C4 /* Assets.xcassets */,
 				E09A3ED32437BFF4009D23C4 /* LaunchScreen.storyboard */,
 				E09A3ED62437BFF4009D23C4 /* Info.plist */,
@@ -176,6 +179,7 @@
 				E09A3EC92437BFF4009D23C4 /* AppDelegate.swift in Sources */,
 				E09A3ECB2437BFF4009D23C4 /* SceneDelegate.swift in Sources */,
 				E09A3ECD2437BFF4009D23C4 /* ContentView.swift in Sources */,
+				E09675782438DCD7001E6BB5 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

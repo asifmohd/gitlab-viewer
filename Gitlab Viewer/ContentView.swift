@@ -71,6 +71,7 @@ struct ProjectDetailsView: View {
 
 struct ProjectsList: View {
     @State private var projects: [Project] = []
+    @State private var isLoading: Bool = false
     @State private var nextPageLink: String?
     let gitlabConfig: GitlabConfig
     let group: Int?
@@ -84,6 +85,12 @@ struct ProjectsList: View {
                 .onAppear {
                     self.listItemDidAppear(project)
                 }
+            }
+            if self.isLoading {
+                Text("Loading more projects...")
+            }
+            if self.allProjectsLoaded() {
+                Text("Fetched all projects, no more to fetch")
             }
         }
         .onAppear {
@@ -104,7 +111,7 @@ struct ProjectsList: View {
     }
 
     private func loadData() {
-        guard !allProjectsLoaded() else {
+        guard !allProjectsLoaded() && !self.isLoading else {
             return
         }
         let urlString: String
@@ -123,6 +130,7 @@ struct ProjectsList: View {
 
         var urlRequest = URLRequest(url: url)
         urlRequest.setValue(self.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        self.isLoading = true
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {
                 print(error as Any)
@@ -137,6 +145,7 @@ struct ProjectsList: View {
                     nextPageLink = self.getNextPageLink(from: linkHeader)
                 }
                 DispatchQueue.main.async {
+                    self.isLoading = false
                     self.projects.append(contentsOf: projects)
                     self.nextPageLink = nextPageLink
                 }

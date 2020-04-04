@@ -29,3 +29,7 @@ This GitHub profile contains most of my public code, so it made sense to me to o
    A run script in the `Gitlab Viewer` target will try to read from `.gitlab-configs.yml` file and copy the credentials to the build directory's `Gitlab_configs.plist`
 
 - Build and run the app
+
+### Requirements
+- Built with Xcode 11.4
+- Minimum deployment target is iOS 13.0

@@ -72,6 +72,7 @@ struct ProjectDetailsView: View {
 struct ProjectsList: View {
     @State private var projects: [Project] = []
     let gitlabConfig: GitlabConfig
+    let group: Int?
 
     var body: some View {
         List {
@@ -84,11 +85,18 @@ struct ProjectsList: View {
         .onAppear {
             self.loadData()
         }
-        .navigationBarTitle("Projects List")
+        .navigationBarTitle("Projects")
     }
 
     func loadData() {
-        guard let url = URL(string: "\(self.gitlabConfig.baseURL)/projects") else {
+        let urlString: String
+        if let groupId = self.group {
+            urlString = "\(self.gitlabConfig.baseURL)/groups/\(groupId)/projects"
+        } else {
+            // default to all projects if groupId does not exist
+            urlString = "\(self.gitlabConfig.baseURL)/projects"
+        }
+        guard let url = URL(string: urlString) else {
             assertionFailure("Invalid url")
             return
         }
@@ -105,6 +113,55 @@ struct ProjectsList: View {
                 let projects = try decoder.decode([Project].self, from: dataU)
                 DispatchQueue.main.async {
                     self.projects = projects
+                }
+            } catch let error {
+                print(error)
+            }
+        }.resume()
+    }
+}
+
+struct GroupsView: View {
+    struct Group: Codable, Identifiable {
+        let id: Int
+        let name: String
+    }
+
+    @State private var groups: [Group] = []
+    let gitlabConfig: GitlabConfig
+
+    var body: some View {
+        List {
+            ForEach(groups) { (group) in
+                NavigationLink(destination: ProjectsList(gitlabConfig: self.gitlabConfig, group: group.id)) {
+                    Text(group.name)
+                }
+            }
+        }
+        .onAppear {
+            self.loadData()
+        }
+        .navigationBarTitle("Gitlab Groups")
+    }
+
+    func loadData() {
+        guard let url = URL(string: "\(self.gitlabConfig.baseURL)/groups") else {
+            assertionFailure("Invalid url")
+            return
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue(self.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+            guard error == nil, let dataU = data else {
+                print(error as Any)
+                return
+            }
+            let decoder = JSONDecoder()
+            do {
+                let groups = try decoder.decode([Group].self, from: dataU)
+                DispatchQueue.main.async {
+                    self.groups = groups
                 }
             } catch let error {
                 print(error)
@@ -131,7 +188,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            ProjectsList(gitlabConfig: self.gitlabConfig)
+            GroupsView(gitlabConfig: self.gitlabConfig)
         }
     }
 

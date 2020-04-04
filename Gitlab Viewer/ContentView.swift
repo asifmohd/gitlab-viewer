@@ -23,31 +23,68 @@ struct GitlabConfig: Codable {
     }
 }
 
-struct ContentView: View {
-    @State private var projects: [Project] = []
-    private let gitlabConfig: GitlabConfig
+struct MergeRequest: Codable, Identifiable {
+    let id: Int
+    let title: String
+}
 
-    init() {
-        guard let configPlistURL = Bundle.main.url(forResource: "Gitlab_configs", withExtension: "plist") else {
-                fatalError("Could not find Gitlab_configs.plist")
-        }
-        let plistDecoder = PropertyListDecoder()
-        do {
-            let data = try Data(contentsOf: configPlistURL)
-            self.gitlabConfig = try plistDecoder.decode(GitlabConfig.self, from: data)
-        } catch let error {
-            fatalError("Failed to decode plist with error \(error)")
-        }
-    }
+struct ProjectDetailsView: View {
+    let project: Project
+    let gitlabConfig: GitlabConfig
+    @State var mergeRequests: [MergeRequest] = []
 
     var body: some View {
-        VStack {
-            List(projects) { project in
-                Text(project.name)
-            }.onAppear {
-                self.loadData()
+        List(mergeRequests) { mergeRequest in
+            Text(mergeRequest.title)
+        }
+        .onAppear() {
+            self.loadData()
+        }
+        .navigationBarTitle("Merge Requests")
+    }
+
+    func loadData() {
+        guard let url = URL(string: "\(self.gitlabConfig.baseURL)/projects/\(self.project.id)/merge_requests") else {
+            assertionFailure("Invalid url")
+            return
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue(self.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+            guard error == nil, let dataU = data else {
+                print(error as Any)
+                return
+            }
+            let decoder = JSONDecoder()
+            do {
+                let mergeRequests = try decoder.decode([MergeRequest].self, from: dataU)
+                DispatchQueue.main.async {
+                    self.mergeRequests = mergeRequests
+                }
+            } catch let error {
+                print(error)
+            }
+        }.resume()
+    }
+}
+
+struct ProjectsList: View {
+    @State private var projects: [Project] = []
+    let gitlabConfig: GitlabConfig
+
+    var body: some View {
+        List {
+            ForEach(projects) { project in
+                NavigationLink(destination: ProjectDetailsView(project: project, gitlabConfig: self.gitlabConfig)) {
+                    Text(project.name)
+                }
             }
         }
+        .onAppear {
+            self.loadData()
+        }
+        .navigationBarTitle("Projects List")
     }
 
     func loadData() {
@@ -74,6 +111,31 @@ struct ContentView: View {
             }
         }.resume()
     }
+}
+
+struct ContentView: View {
+    private let gitlabConfig: GitlabConfig
+
+    init() {
+        guard let configPlistURL = Bundle.main.url(forResource: "Gitlab_configs", withExtension: "plist") else {
+                fatalError("Could not find Gitlab_configs.plist")
+        }
+        let plistDecoder = PropertyListDecoder()
+        do {
+            let data = try Data(contentsOf: configPlistURL)
+            self.gitlabConfig = try plistDecoder.decode(GitlabConfig.self, from: data)
+        } catch let error {
+            fatalError("Failed to decode plist with error \(error)")
+        }
+    }
+
+    var body: some View {
+        NavigationView {
+            ProjectsList(gitlabConfig: self.gitlabConfig)
+        }
+    }
+
+
 }
 
 struct ContentView_Previews: PreviewProvider {

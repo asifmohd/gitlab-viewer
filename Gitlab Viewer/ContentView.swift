@@ -23,6 +23,23 @@ struct GitlabConfig: Codable {
     }
 }
 
+class AppSettings: ObservableObject {
+    let gitlabConfig: GitlabConfig
+
+    init() {
+        guard let configPlistURL = Bundle.main.url(forResource: "Gitlab_configs", withExtension: "plist") else {
+                fatalError("Could not find Gitlab_configs.plist")
+        }
+        let plistDecoder = PropertyListDecoder()
+        do {
+            let data = try Data(contentsOf: configPlistURL)
+            self.gitlabConfig = try plistDecoder.decode(GitlabConfig.self, from: data)
+        } catch let error {
+            fatalError("Failed to decode plist with error \(error)")
+        }
+    }
+}
+
 struct MergeRequest: Codable, Identifiable {
     let id: Int
     let title: String
@@ -30,7 +47,7 @@ struct MergeRequest: Codable, Identifiable {
 
 struct ProjectDetailsView: View {
     let project: Project
-    let gitlabConfig: GitlabConfig
+    @EnvironmentObject private var appSettings: AppSettings
     @State var mergeRequests: [MergeRequest] = []
 
     var body: some View {
@@ -44,13 +61,13 @@ struct ProjectDetailsView: View {
     }
 
     func loadData() {
-        guard let url = URL(string: "\(self.gitlabConfig.baseURL)/projects/\(self.project.id)/merge_requests") else {
+        guard let url = URL(string: "\(self.appSettings.gitlabConfig.baseURL)/projects/\(self.project.id)/merge_requests") else {
             assertionFailure("Invalid url")
             return
         }
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue(self.appSettings.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {
                 print(error as Any)
@@ -73,13 +90,13 @@ struct ProjectsList: View {
     @State private var projects: [Project] = []
     @State private var isLoading: Bool = false
     @State private var nextPageLink: String?
-    let gitlabConfig: GitlabConfig
+    @EnvironmentObject private var appSettings: AppSettings
     let group: Int?
 
     var body: some View {
         List {
             ForEach(projects) { project in
-                NavigationLink(destination: ProjectDetailsView(project: project, gitlabConfig: self.gitlabConfig)) {
+                NavigationLink(destination: ProjectDetailsView(project: project)) {
                     Text(project.name)
                 }
                 .onAppear {
@@ -121,10 +138,10 @@ struct ProjectsList: View {
         if let nextPageLink = self.nextPageLink {
             urlString = nextPageLink
         } else if let groupId = self.group {
-            urlString = "\(self.gitlabConfig.baseURL)/groups/\(groupId)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
+            urlString = "\(self.appSettings.gitlabConfig.baseURL)/groups/\(groupId)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         } else {
             // default to all projects if groupId does not exist
-            urlString = "\(self.gitlabConfig.baseURL)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
+            urlString = "\(self.appSettings.gitlabConfig.baseURL)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         }
         guard let url = URL(string: urlString) else {
             assertionFailure("Invalid url")
@@ -132,7 +149,7 @@ struct ProjectsList: View {
         }
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue(self.appSettings.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
         self.isLoading = true
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {
@@ -175,12 +192,12 @@ struct GroupsView: View {
     }
 
     @State private var groups: [Group] = []
-    let gitlabConfig: GitlabConfig
+    @EnvironmentObject private var appSettings: AppSettings
 
     var body: some View {
         List {
             ForEach(groups) { (group) in
-                NavigationLink(destination: ProjectsList(gitlabConfig: self.gitlabConfig, group: group.id)) {
+                NavigationLink(destination: ProjectsList(group: group.id)) {
                     Text(group.name)
                 }
             }
@@ -192,13 +209,13 @@ struct GroupsView: View {
     }
 
     func loadData() {
-        guard let url = URL(string: "\(self.gitlabConfig.baseURL)/groups") else {
+        guard let url = URL(string: "\(self.appSettings.gitlabConfig.baseURL)/groups") else {
             assertionFailure("Invalid url")
             return
         }
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue(self.appSettings.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {
                 print(error as Any)
@@ -218,24 +235,10 @@ struct GroupsView: View {
 }
 
 struct ContentView: View {
-    private let gitlabConfig: GitlabConfig
-
-    init() {
-        guard let configPlistURL = Bundle.main.url(forResource: "Gitlab_configs", withExtension: "plist") else {
-                fatalError("Could not find Gitlab_configs.plist")
-        }
-        let plistDecoder = PropertyListDecoder()
-        do {
-            let data = try Data(contentsOf: configPlistURL)
-            self.gitlabConfig = try plistDecoder.decode(GitlabConfig.self, from: data)
-        } catch let error {
-            fatalError("Failed to decode plist with error \(error)")
-        }
-    }
 
     var body: some View {
         NavigationView {
-            GroupsView(gitlabConfig: self.gitlabConfig)
+            GroupsView()
         }
     }
 
@@ -244,7 +247,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(AppSettings())
         .previewDevice(PreviewDevice(rawValue: "iPhone 8"))
     }
 }

@@ -176,7 +176,7 @@ struct ProjectsList: View {
     }
 
     private func getNextPageLink(from header: String) -> String? {
-        let splitHeaderArray = header.split(separator: ",")
+        let splitHeaderArray = header.split(separator: Character(","))
         guard let nextURLIndex = splitHeaderArray.firstIndex(where: { (string) in return string.contains("rel=\"next\"") }),
             let nextPageLink = splitHeaderArray[nextURLIndex].split(separator: ";").first?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).trimmingCharacters(in: CharacterSet.init(charactersIn: "<>")) else {
             return nil

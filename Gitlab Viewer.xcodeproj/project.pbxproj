@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		E02BE0B224549A2F00FC0489 /* GroupsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B124549A2F00FC0489 /* GroupsModel.swift */; };
 		E02BE0B42455787900FC0489 /* GitlabAPIWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */; };
+		E02BE0B624557AC200FC0489 /* GroupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B524557AC200FC0489 /* GroupsView.swift */; };
+		E02BE0B924557B2500FC0489 /* ProjectsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B824557B2500FC0489 /* ProjectsListView.swift */; };
+		E02BE0BB24557B4000FC0489 /* ProjectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0BA24557B4000FC0489 /* ProjectModel.swift */; };
+		E02BE0BE24557C0000FC0489 /* MergeRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0BD24557C0000FC0489 /* MergeRequestModel.swift */; };
+		E02BE0C024557C1600FC0489 /* ProjectDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0BF24557C1600FC0489 /* ProjectDetailsView.swift */; };
+		E02BE0C324557C6200FC0489 /* GitlabConfigModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0C224557C6200FC0489 /* GitlabConfigModel.swift */; };
+		E02BE0C524557C8600FC0489 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0C424557C8600FC0489 /* AppSettings.swift */; };
 		E09675782438DCD7001E6BB5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09675772438DCD7001E6BB5 /* Extensions.swift */; };
 		E096757A2438EE13001E6BB5 /* WrappedViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09675792438EE13001E6BB5 /* WrappedViews.swift */; };
 		E09A3EC92437BFF4009D23C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */; };
@@ -23,6 +30,13 @@
 /* Begin PBXFileReference section */
 		E02BE0B124549A2F00FC0489 /* GroupsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsModel.swift; sourceTree = "<group>"; };
 		E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitlabAPIWrapper.swift; sourceTree = "<group>"; };
+		E02BE0B524557AC200FC0489 /* GroupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsView.swift; sourceTree = "<group>"; };
+		E02BE0B824557B2500FC0489 /* ProjectsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsListView.swift; sourceTree = "<group>"; };
+		E02BE0BA24557B4000FC0489 /* ProjectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectModel.swift; sourceTree = "<group>"; };
+		E02BE0BD24557C0000FC0489 /* MergeRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeRequestModel.swift; sourceTree = "<group>"; };
+		E02BE0BF24557C1600FC0489 /* ProjectDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailsView.swift; sourceTree = "<group>"; };
+		E02BE0C224557C6200FC0489 /* GitlabConfigModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitlabConfigModel.swift; sourceTree = "<group>"; };
+		E02BE0C424557C8600FC0489 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		E0632CC924993C1200F98939 /* Gitlab Viewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Gitlab Viewer.entitlements"; sourceTree = "<group>"; };
 		E09675772438DCD7001E6BB5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E09675792438EE13001E6BB5 /* WrappedViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappedViews.swift; sourceTree = "<group>"; };
@@ -48,6 +62,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E02BE0B724557ADB00FC0489 /* Groups */ = {
+			isa = PBXGroup;
+			children = (
+				E02BE0B124549A2F00FC0489 /* GroupsModel.swift */,
+				E02BE0B524557AC200FC0489 /* GroupsView.swift */,
+			);
+			path = Groups;
+			sourceTree = "<group>";
+		};
+		E02BE0BC24557B4700FC0489 /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				E02BE0B824557B2500FC0489 /* ProjectsListView.swift */,
+				E02BE0BA24557B4000FC0489 /* ProjectModel.swift */,
+			);
+			path = Projects;
+			sourceTree = "<group>";
+		};
+		E02BE0C124557C1E00FC0489 /* Project Details */ = {
+			isa = PBXGroup;
+			children = (
+				E02BE0BD24557C0000FC0489 /* MergeRequestModel.swift */,
+				E02BE0BF24557C1600FC0489 /* ProjectDetailsView.swift */,
+			);
+			path = "Project Details";
+			sourceTree = "<group>";
+		};
 		E09A3EBC2437BFF4009D23C4 = {
 			isa = PBXGroup;
 			children = (
@@ -71,8 +112,12 @@
 				E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */,
 				E09A3ECA2437BFF4009D23C4 /* SceneDelegate.swift */,
 				E09A3ECC2437BFF4009D23C4 /* ContentView.swift */,
+				E02BE0C124557C1E00FC0489 /* Project Details */,
+				E02BE0BC24557B4700FC0489 /* Projects */,
+				E02BE0B724557ADB00FC0489 /* Groups */,
 				E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */,
-				E02BE0B124549A2F00FC0489 /* GroupsModel.swift */,
+				E02BE0C224557C6200FC0489 /* GitlabConfigModel.swift */,
+				E02BE0C424557C8600FC0489 /* AppSettings.swift */,
 				E09675772438DCD7001E6BB5 /* Extensions.swift */,
 				E09A3ECE2437BFF4009D23C4 /* Assets.xcassets */,
 				E09A3ED32437BFF4009D23C4 /* LaunchScreen.storyboard */,
@@ -189,11 +234,18 @@
 			files = (
 				E09A3EC92437BFF4009D23C4 /* AppDelegate.swift in Sources */,
 				E09A3ECB2437BFF4009D23C4 /* SceneDelegate.swift in Sources */,
+				E02BE0C524557C8600FC0489 /* AppSettings.swift in Sources */,
 				E09A3ECD2437BFF4009D23C4 /* ContentView.swift in Sources */,
 				E02BE0B224549A2F00FC0489 /* GroupsModel.swift in Sources */,
 				E09675782438DCD7001E6BB5 /* Extensions.swift in Sources */,
+				E02BE0BB24557B4000FC0489 /* ProjectModel.swift in Sources */,
 				E02BE0B42455787900FC0489 /* GitlabAPIWrapper.swift in Sources */,
+				E02BE0BE24557C0000FC0489 /* MergeRequestModel.swift in Sources */,
+				E02BE0B624557AC200FC0489 /* GroupsView.swift in Sources */,
+				E02BE0B924557B2500FC0489 /* ProjectsListView.swift in Sources */,
 				E096757A2438EE13001E6BB5 /* WrappedViews.swift in Sources */,
+				E02BE0C324557C6200FC0489 /* GitlabConfigModel.swift in Sources */,
+				E02BE0C024557C1600FC0489 /* ProjectDetailsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

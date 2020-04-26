@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct Project: Codable, Identifiable {
     let id: Int
@@ -24,20 +25,7 @@ struct GitlabConfig: Codable {
 }
 
 class AppSettings: ObservableObject {
-    let gitlabConfig: GitlabConfig
-
-    init() {
-        guard let configPlistURL = Bundle.main.url(forResource: "Gitlab_configs", withExtension: "plist") else {
-                fatalError("Could not find Gitlab_configs.plist")
-        }
-        let plistDecoder = PropertyListDecoder()
-        do {
-            let data = try Data(contentsOf: configPlistURL)
-            self.gitlabConfig = try plistDecoder.decode(GitlabConfig.self, from: data)
-        } catch let error {
-            fatalError("Failed to decode plist with error \(error)")
-        }
-    }
+    let gitlabAPI: GitlabAPIWrapper = GitlabAPIWrapper()
 }
 
 struct MergeRequest: Codable, Identifiable {
@@ -61,13 +49,13 @@ struct ProjectDetailsView: View {
     }
 
     func loadData() {
-        guard let url = URL(string: "\(self.appSettings.gitlabConfig.baseURL)/projects/\(self.project.id)/merge_requests") else {
+        guard let url = URL(string: "\(self.appSettings.gitlabAPI.config.baseURL)/projects/\(self.project.id)/merge_requests") else {
             assertionFailure("Invalid url")
             return
         }
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.appSettings.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue(self.appSettings.gitlabAPI.config.authToken, forHTTPHeaderField: "Private-Token")
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {
                 print(error as Any)
@@ -138,10 +126,10 @@ struct ProjectsList: View {
         if let nextPageLink = self.nextPageLink {
             urlString = nextPageLink
         } else if let groupId = self.group {
-            urlString = "\(self.appSettings.gitlabConfig.baseURL)/groups/\(groupId)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
+            urlString = "\(self.appSettings.gitlabAPI.config.baseURL)/groups/\(groupId)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         } else {
             // default to all projects if groupId does not exist
-            urlString = "\(self.appSettings.gitlabConfig.baseURL)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
+            urlString = "\(self.appSettings.gitlabAPI.config.baseURL)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         }
         guard let url = URL(string: urlString) else {
             assertionFailure("Invalid url")
@@ -149,7 +137,7 @@ struct ProjectsList: View {
         }
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.appSettings.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue(self.appSettings.gitlabAPI.config.authToken, forHTTPHeaderField: "Private-Token")
         self.isLoading = true
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {
@@ -186,13 +174,9 @@ struct ProjectsList: View {
 }
 
 struct GroupsView: View {
-    struct Group: Codable, Identifiable {
-        let id: Int
-        let name: String
-    }
 
-    @State private var groups: [Group] = []
     @EnvironmentObject private var appSettings: AppSettings
+    @State private var groups: [Group] = []
 
     var body: some View {
         List {
@@ -202,35 +186,10 @@ struct GroupsView: View {
                 }
             }
         }
-        .onAppear {
-            self.loadData()
-        }
         .navigationBarTitle("Gitlab Groups")
-    }
-
-    func loadData() {
-        guard let url = URL(string: "\(self.appSettings.gitlabConfig.baseURL)/groups") else {
-            assertionFailure("Invalid url")
-            return
+        .onReceive(self.appSettings.gitlabAPI.groupAPI.publisher) { (groups) in
+            self.groups = groups
         }
-
-        var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.appSettings.gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
-        URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            guard error == nil, let dataU = data else {
-                print(error as Any)
-                return
-            }
-            let decoder = JSONDecoder()
-            do {
-                let groups = try decoder.decode([Group].self, from: dataU)
-                DispatchQueue.main.async {
-                    self.groups = groups
-                }
-            } catch let error {
-                print(error)
-            }
-        }.resume()
     }
 }
 

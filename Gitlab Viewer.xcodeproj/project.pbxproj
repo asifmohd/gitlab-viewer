@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E02BE0B224549A2F00FC0489 /* GroupsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B124549A2F00FC0489 /* GroupsModel.swift */; };
+		E02BE0B42455787900FC0489 /* GitlabAPIWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */; };
 		E09675782438DCD7001E6BB5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09675772438DCD7001E6BB5 /* Extensions.swift */; };
 		E096757A2438EE13001E6BB5 /* WrappedViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09675792438EE13001E6BB5 /* WrappedViews.swift */; };
 		E09A3EC92437BFF4009D23C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */; };
@@ -19,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E02BE0B124549A2F00FC0489 /* GroupsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsModel.swift; sourceTree = "<group>"; };
+		E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitlabAPIWrapper.swift; sourceTree = "<group>"; };
 		E09675772438DCD7001E6BB5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E09675792438EE13001E6BB5 /* WrappedViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappedViews.swift; sourceTree = "<group>"; };
 		E09A3EC52437BFF4009D23C4 /* Gitlab Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gitlab Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +69,8 @@
 				E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */,
 				E09A3ECA2437BFF4009D23C4 /* SceneDelegate.swift */,
 				E09A3ECC2437BFF4009D23C4 /* ContentView.swift */,
+				E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */,
+				E02BE0B124549A2F00FC0489 /* GroupsModel.swift */,
 				E09675772438DCD7001E6BB5 /* Extensions.swift */,
 				E09A3ECE2437BFF4009D23C4 /* Assets.xcassets */,
 				E09A3ED32437BFF4009D23C4 /* LaunchScreen.storyboard */,
@@ -182,7 +188,9 @@
 				E09A3EC92437BFF4009D23C4 /* AppDelegate.swift in Sources */,
 				E09A3ECB2437BFF4009D23C4 /* SceneDelegate.swift in Sources */,
 				E09A3ECD2437BFF4009D23C4 /* ContentView.swift in Sources */,
+				E02BE0B224549A2F00FC0489 /* GroupsModel.swift in Sources */,
 				E09675782438DCD7001E6BB5 /* Extensions.swift in Sources */,
+				E02BE0B42455787900FC0489 /* GitlabAPIWrapper.swift in Sources */,
 				E096757A2438EE13001E6BB5 /* WrappedViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

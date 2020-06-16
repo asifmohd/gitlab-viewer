@@ -176,7 +176,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Look for a file named .gitlab-configs in the project directory\nconfigs=.gitlab-configs.yml\nconfigs=\"$(sed -e 's/:[^:\\/\\/]/=/g;s/$//g;s/ *=/=/g' .gitlab-configs.yml | tee /tmp/exportable_config.txt)\"\nif [ \"$configs\" ]; then\n  awk '{print $1}' /tmp/exportable_config.txt | while read config\n  do\n    KEY_NAME=\"$(echo $config | awk -F '=' '{ print $1 } ')\"\n    VALUE=\"$(echo $config | awk -F '=' '{ print $2} ')\"\n    plutil -replace $KEY_NAME -string $VALUE \"$TARGET_BUILD_DIR/$FULL_PRODUCT_NAME/Gitlab_configs.plist\"\n  done\nelse\n  echo 'warning: Missing Gitlab configs file'\n  echo \"warning: create a .gitlab-config file\"\nfi\n";
+			shellScript = "# Look for a file named .gitlab-configs in the project directory\nconfigs=.gitlab-configs.yml\nconfigs=\"$(sed -e 's/:[^:\\/\\/]/=/g;s/$//g;s/ *=/=/g' .gitlab-configs.yml | tee /tmp/exportable_config.txt)\"\nif [ \"$configs\" ]; then\n  awk '{print $1}' /tmp/exportable_config.txt | while read config\n  do\n    KEY_NAME=\"$(echo $config | awk -F '=' '{ print $1 } ')\"\n    VALUE=\"$(echo $config | awk -F '=' '{ print $2} ')\"\n    plutil -replace $KEY_NAME -string $VALUE \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Gitlab_configs.plist\"\n  done\nelse\n  echo 'warning: Missing Gitlab configs file'\n  echo \"warning: create a .gitlab-config file\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

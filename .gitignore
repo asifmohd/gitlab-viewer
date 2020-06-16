@@ -1,3 +1,5 @@
 .gitlab-configs.yml
 
 *xcuserdata
+*DS_Store
+*xcshareddata

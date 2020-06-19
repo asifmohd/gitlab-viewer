@@ -9,11 +9,31 @@
 import SwiftUI
 import Combine
 
+struct MainMenuCell: View {
+    let featureName: String
+    var body: some View {
+        Text(featureName)
+    }
+}
+
+struct MainMenu: View {
+    var body: some View {
+        List {
+            NavigationLink(destination: GroupsView()) {
+                Text("Groups")
+            }
+            NavigationLink(destination: GroupsView()) {
+                Text("Runners")
+            }
+        }.navigationBarTitle("Gitlab Viewer")
+    }
+}
+
 struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            GroupsView()
+            MainMenu()
         }
     }
 }

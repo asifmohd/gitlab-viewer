@@ -17,9 +17,61 @@ struct Runner: Codable, Identifiable {
 }
 
 struct RunnerDetailView: View {
-    let name: String
+    let runner: Runner
     var body: some View {
-        Text(name)
+        Text(runner.description)
+    }
+}
+
+struct RunnerStatusView: View {
+    enum Mode {
+        case active(online: Bool)
+        case inactive(online: Bool)
+
+        func color() -> Color {
+            switch self {
+            case .active(let online):
+                if online {
+                    return Color.green
+                } else {
+                    return Color.gray
+                }
+            case .inactive(let online):
+                if online {
+                    return Color.red
+                } else {
+                    return Color.gray
+                }
+            }
+        }
+
+        init(active: Bool, online: Bool) {
+            if active {
+                self = .active(online: online)
+            } else {
+                self = .inactive(online: online)
+            }
+        }
+    }
+    let mode: Mode
+    var body: some View {
+        Circle()
+            .fill(mode.color())
+            .frame(width: 24, height: 24)
+    }
+}
+
+struct RunnerCellView: View {
+    let runner: Runner
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(runner.description)
+            HStack {
+                RunnerStatusView(mode: RunnerStatusView.Mode(active: runner.active, online: runner.online))
+                Text("\(runner.status)")
+            }
+        }
+
     }
 }
 
@@ -27,8 +79,8 @@ struct RunnerListView: View {
     let runnerList: [Runner]
     var body: some View {
         ForEach(runnerList) { (runner) in
-            NavigationLink(destination: RunnerDetailView(name: runner.description)) {
-                Text(runner.description)
+            NavigationLink(destination: RunnerDetailView(runner: runner)) {
+                RunnerCellView(runner: runner)
             }
         }
     }

@@ -22,7 +22,7 @@ struct MainMenu: View {
             NavigationLink(destination: GroupsView()) {
                 Text("Groups")
             }
-            NavigationLink(destination: GroupsView()) {
+            NavigationLink(destination: RunnerView()) {
                 Text("Runners")
             }
         }.navigationBarTitle("Gitlab Viewer")

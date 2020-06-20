@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E0250A23249D72A000F295E3 /* RunnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0250A22249D72A000F295E3 /* RunnerView.swift */; };
 		E02BE0B224549A2F00FC0489 /* GroupsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B124549A2F00FC0489 /* GroupsModel.swift */; };
 		E02BE0B42455787900FC0489 /* GitlabAPIWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */; };
 		E02BE0B624557AC200FC0489 /* GroupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B524557AC200FC0489 /* GroupsView.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E0250A22249D72A000F295E3 /* RunnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerView.swift; sourceTree = "<group>"; };
 		E02BE0B124549A2F00FC0489 /* GroupsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsModel.swift; sourceTree = "<group>"; };
 		E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitlabAPIWrapper.swift; sourceTree = "<group>"; };
 		E02BE0B524557AC200FC0489 /* GroupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsView.swift; sourceTree = "<group>"; };
@@ -89,6 +91,14 @@
 			path = "Project Details";
 			sourceTree = "<group>";
 		};
+		E0250A21249D729500F295E3 /* Runners */ = {
+			isa = PBXGroup;
+			children = (
+				E0250A22249D72A000F295E3 /* RunnerView.swift */,
+			);
+			path = Runners;
+			sourceTree = "<group>";
+		};
 		E09A3EBC2437BFF4009D23C4 = {
 			isa = PBXGroup;
 			children = (
@@ -108,6 +118,7 @@
 		E09A3EC72437BFF4009D23C4 /* Gitlab Viewer */ = {
 			isa = PBXGroup;
 			children = (
+				E0250A21249D729500F295E3 /* Runners */,
 				E0632CC924993C1200F98939 /* Gitlab Viewer.entitlements */,
 				E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */,
 				E09A3ECA2437BFF4009D23C4 /* SceneDelegate.swift */,
@@ -246,6 +257,7 @@
 				E096757A2438EE13001E6BB5 /* WrappedViews.swift in Sources */,
 				E02BE0C324557C6200FC0489 /* GitlabConfigModel.swift in Sources */,
 				E02BE0C024557C1600FC0489 /* ProjectDetailsView.swift in Sources */,
+				E0250A23249D72A000F295E3 /* RunnerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

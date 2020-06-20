@@ -10,7 +10,10 @@ import SwiftUI
 
 struct Runner: Codable, Identifiable {
     let id: Int
-    let name: String
+    let description: String
+    let active: Bool
+    let online: Bool
+    let status: String
 }
 
 struct RunnerDetailView: View {
@@ -20,13 +23,21 @@ struct RunnerDetailView: View {
     }
 }
 
-struct RunnerView: View {
-    init(runnerList: [Runner] = []) {
-        self.runnerList = runnerList
+struct RunnerListView: View {
+    let runnerList: [Runner]
+    var body: some View {
+        ForEach(runnerList) { (runner) in
+            NavigationLink(destination: RunnerDetailView(name: runner.description)) {
+                Text(runner.description)
+            }
+        }
     }
+}
 
-    private var runnerList: [Runner]
-    @State private var isLoading: Bool = true
+struct RunnerView: View {
+    @EnvironmentObject private var appSettings: AppSettings
+    @State(initialValue: []) private var runnerList: [Runner]
+    @State(initialValue: true) private var isLoading: Bool
     var body: some View {
         List {
             if self.isLoading {
@@ -37,17 +48,16 @@ struct RunnerView: View {
                     Spacer()
                 }
             } else {
-                ForEach(runnerList) { (runner) in
-                    NavigationLink(destination: RunnerDetailView(name: runner.name)) {
-                        Text(runner.name)
-                    }
-                }
+                RunnerListView(runnerList: runnerList)
             }
         }.navigationBarTitle("Runners")
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                     self.isLoading = false
                 }
+        }.onReceive(appSettings.gitlabAPI.runnerAPI.publisher) { (runners) in
+            self.isLoading = false
+            self.runnerList = runners
         }
     }
 }
@@ -55,11 +65,14 @@ struct RunnerView: View {
 #if DEBUG
 struct RunnerView_Preview: PreviewProvider {
     static let runners: [Runner] = [
-        Runner(id: 1, name: "Runner 1"),
-        Runner(id: 2, name: "Runner 2")]
+        Runner(id: 1, description: "Runner 1", active: true, online: true, status: "Online"),
+        Runner(id: 2, description: "Runner 2", active: true, online: false, status: "Offline"),
+        Runner(id: 3, description: "Runner 3", active: false, online: true, status: "Paused")]
     static var previews: some View {
         NavigationView {
-            RunnerView(runnerList: runners)
+            List {
+                RunnerListView(runnerList: runners)
+            }.navigationBarTitle("Runners")
         }
     }
 }

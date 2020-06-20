@@ -12,6 +12,7 @@ import Combine
 class GitlabAPIWrapper {
     let config: GitlabConfig
     let groupAPI: GroupAPI
+    let runnerAPI: RunnerAPI
 
     init() {
         guard let configPlistURL = Bundle.main.url(forResource: "Gitlab_configs", withExtension: "plist") else {
@@ -23,6 +24,7 @@ class GitlabAPIWrapper {
             let gitlabConfig = try plistDecoder.decode(GitlabConfig.self, from: data)
             self.config = gitlabConfig
             self.groupAPI = GroupAPI(gitlabConfig: gitlabConfig)
+            self.runnerAPI = RunnerAPI(gitlabConfig: gitlabConfig)
         } catch let error {
             fatalError("Failed to decode plist with error \(error)")
         }
@@ -47,6 +49,30 @@ class GroupAPI: ObservableObject {
             .catch({ (error) -> AnyPublisher<[Group], Never> in
                 print("Groups API error: \(error)")
                 return Empty<[Group], Never>(completeImmediately: true).eraseToAnyPublisher()
+            })
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+}
+
+class RunnerAPI: ObservableObject {
+    let publisher: AnyPublisher<[Runner], Never>
+
+    init(gitlabConfig: GitlabConfig) {
+        guard let url = URL(string: "\(gitlabConfig.baseURL)/projects/\(gitlabConfig.projectIdForRunner)/runners?tag_list=\(gitlabConfig.tagFilterForRunner)") else {
+            assertionFailure("Invalid url")
+            self.publisher = Empty<[Runner], Never>(completeImmediately: true).eraseToAnyPublisher()
+            return
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue(gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        self.publisher = URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map(\.data)
+            .decode(type: [Runner].self, decoder: JSONDecoder())
+            .catch({ (error) -> AnyPublisher<[Runner], Never> in
+                print("Groups API error: \(error)")
+                return Empty<[Runner], Never>(completeImmediately: true).eraseToAnyPublisher()
             })
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()

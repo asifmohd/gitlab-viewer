@@ -64,6 +64,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E0250A21249D729500F295E3 /* Runners */ = {
+			isa = PBXGroup;
+			children = (
+				E0250A22249D72A000F295E3 /* RunnerView.swift */,
+			);
+			path = Runners;
+			sourceTree = "<group>";
+		};
 		E02BE0B724557ADB00FC0489 /* Groups */ = {
 			isa = PBXGroup;
 			children = (
@@ -91,14 +99,6 @@
 			path = "Project Details";
 			sourceTree = "<group>";
 		};
-		E0250A21249D729500F295E3 /* Runners */ = {
-			isa = PBXGroup;
-			children = (
-				E0250A22249D72A000F295E3 /* RunnerView.swift */,
-			);
-			path = Runners;
-			sourceTree = "<group>";
-		};
 		E09A3EBC2437BFF4009D23C4 = {
 			isa = PBXGroup;
 			children = (
@@ -118,7 +118,6 @@
 		E09A3EC72437BFF4009D23C4 /* Gitlab Viewer */ = {
 			isa = PBXGroup;
 			children = (
-				E0250A21249D729500F295E3 /* Runners */,
 				E0632CC924993C1200F98939 /* Gitlab Viewer.entitlements */,
 				E09A3EC82437BFF4009D23C4 /* AppDelegate.swift */,
 				E09A3ECA2437BFF4009D23C4 /* SceneDelegate.swift */,
@@ -126,6 +125,7 @@
 				E02BE0C124557C1E00FC0489 /* Project Details */,
 				E02BE0BC24557B4700FC0489 /* Projects */,
 				E02BE0B724557ADB00FC0489 /* Groups */,
+				E0250A21249D729500F295E3 /* Runners */,
 				E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */,
 				E02BE0C224557C6200FC0489 /* GitlabConfigModel.swift */,
 				E02BE0C424557C8600FC0489 /* AppSettings.swift */,

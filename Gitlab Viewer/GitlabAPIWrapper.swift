@@ -13,6 +13,7 @@ class GitlabAPIWrapper {
     let config: GitlabConfig
     let groupAPI: GroupAPI
     let runnerAPI: RunnerAPI
+    let modifyRunnerAPI: ModifyRunnerStatusAPI
 
     init() {
         guard let configPlistURL = Bundle.main.url(forResource: "Gitlab_configs", withExtension: "plist") else {
@@ -25,6 +26,7 @@ class GitlabAPIWrapper {
             self.config = gitlabConfig
             self.groupAPI = GroupAPI(gitlabConfig: gitlabConfig)
             self.runnerAPI = RunnerAPI(gitlabConfig: gitlabConfig)
+            self.modifyRunnerAPI = ModifyRunnerStatusAPI(gitlabConfig: gitlabConfig)
         } catch let error {
             fatalError("Failed to decode plist with error \(error)")
         }
@@ -71,8 +73,42 @@ class RunnerAPI: ObservableObject {
             .map(\.data)
             .decode(type: [Runner].self, decoder: JSONDecoder())
             .catch({ (error) -> AnyPublisher<[Runner], Never> in
-                print("Groups API error: \(error)")
+                print("Runner API error: \(error)")
                 return Empty<[Runner], Never>(completeImmediately: true).eraseToAnyPublisher()
+            })
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+}
+
+class ModifyRunnerStatusAPI: ObservableObject {
+    var publisher: AnyPublisher<Runner, Never>
+    let gitlabConfig: GitlabConfig
+    var activeFieldValue: Bool = false
+    var runnerId: Int?
+
+    init(gitlabConfig: GitlabConfig) {
+        self.gitlabConfig = gitlabConfig
+        self.publisher = Empty<Runner, Never>(completeImmediately: true).eraseToAnyPublisher()
+    }
+
+    func makeRequest() {
+        guard let runnerId = self.runnerId,
+            let requestURL = URL(string: "\(gitlabConfig.baseURL)/runners/\(runnerId)") else {
+            self.publisher = Empty<Runner, Never>(completeImmediately: true).eraseToAnyPublisher()
+            return
+        }
+        var urlRequest = URLRequest(url: requestURL)
+        urlRequest.httpMethod = "PUT"
+        urlRequest.httpBody = "active=\(activeFieldValue)".data(using: .utf8)
+        urlRequest.setValue(gitlabConfig.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        self.publisher = URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .map(\.data)
+            .decode(type: Runner.self, decoder: JSONDecoder())
+            .catch({ (error) -> AnyPublisher<Runner, Never> in
+                print("Modify runner API error: \(error)")
+                return Empty<Runner, Never>(completeImmediately: true).eraseToAnyPublisher()
             })
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()

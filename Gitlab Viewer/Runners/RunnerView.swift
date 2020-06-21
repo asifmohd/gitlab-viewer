@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct Runner: Codable, Identifiable {
     let id: Int
@@ -14,6 +15,11 @@ struct Runner: Codable, Identifiable {
     let active: Bool
     let online: Bool
     let status: String
+}
+
+enum RunnerToModify {
+    case runner(id: Int, active: Bool)
+    case none
 }
 
 struct RunnerDetailView: View {
@@ -62,13 +68,27 @@ struct RunnerStatusView: View {
 }
 
 struct RunnerCellView: View {
+    var runnerToModifyHolder: RunnerToModifyInfo
     let runner: Runner
+
+    private func buttonActionText() -> String {
+        if runner.active {
+            return "Disable"
+        } else {
+            return "Enable"
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(runner.description)
             HStack {
                 RunnerStatusView(mode: RunnerStatusView.Mode(active: runner.active, online: runner.online))
                 Text("\(runner.status)")
+                Spacer()
+                Button(self.buttonActionText()) {
+                    self.runnerToModifyHolder.runnerToModify = .runner(id: self.runner.id, active: !self.runner.active)
+                }.padding(.trailing, 20)
             }
         }
 
@@ -77,19 +97,29 @@ struct RunnerCellView: View {
 
 struct RunnerListView: View {
     let runnerList: [Runner]
+    var runnerToModifyHolderBinding: RunnerToModifyInfo
     var body: some View {
         ForEach(runnerList) { (runner) in
-            NavigationLink(destination: RunnerDetailView(runner: runner)) {
-                RunnerCellView(runner: runner)
-            }
+            RunnerCellView(runnerToModifyHolder: self.runnerToModifyHolderBinding, runner: runner)
         }
     }
+}
+
+class RunnerToModifyInfo: ObservableObject {
+    @Published var runnerToModify: RunnerToModify = .none
+}
+
+class RunnerViewAPIHolder {
+    var cancellable: Cancellable?
 }
 
 struct RunnerView: View {
     @EnvironmentObject private var appSettings: AppSettings
     @State(initialValue: []) private var runnerList: [Runner]
     @State(initialValue: true) private var isLoading: Bool
+    @ObservedObject private var modifyRunnerStateButtonTapped: RunnerToModifyInfo = RunnerToModifyInfo()
+    let runnerViewAPIHolder: RunnerViewAPIHolder = RunnerViewAPIHolder()
+
     var body: some View {
         List {
             if self.isLoading {
@@ -100,16 +130,31 @@ struct RunnerView: View {
                     Spacer()
                 }
             } else {
-                RunnerListView(runnerList: runnerList)
+                RunnerListView(runnerList: runnerList, runnerToModifyHolderBinding: modifyRunnerStateButtonTapped)
             }
         }.navigationBarTitle("Runners")
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                    self.isLoading = false
+            .onReceive(appSettings.gitlabAPI.modifyRunnerAPI.publisher) { (runner) in
+                guard let index = self.runnerList.firstIndex(where: { $0.id == runner.id }) else {
+                    assertionFailure("Could not find runner which was being modified")
+                    self.modifyRunnerStateButtonTapped.runnerToModify = .none
+                    return
                 }
-        }.onReceive(appSettings.gitlabAPI.runnerAPI.publisher) { (runners) in
-            self.isLoading = false
-            self.runnerList = runners
+                self.runnerList[index] = runner
+                self.modifyRunnerStateButtonTapped.runnerToModify = .none
+        }.onReceive(self.modifyRunnerStateButtonTapped.$runnerToModify) { (runnerToModify) in
+            switch runnerToModify {
+            case .runner(id: let runnerId, active: let activeFieldValue):
+                self.appSettings.gitlabAPI.modifyRunnerAPI.runnerId = runnerId
+                self.appSettings.gitlabAPI.modifyRunnerAPI.activeFieldValue = activeFieldValue
+                self.appSettings.gitlabAPI.modifyRunnerAPI.makeRequest()
+            case .none:
+                break
+            }
+        }.onAppear {
+            self.runnerViewAPIHolder.cancellable = self.appSettings.gitlabAPI.runnerAPI.publisher.sink(receiveValue: { (runners) in
+                self.runnerList = runners
+                self.isLoading = false
+            })
         }
     }
 }
@@ -120,10 +165,11 @@ struct RunnerView_Preview: PreviewProvider {
         Runner(id: 1, description: "Runner 1", active: true, online: true, status: "Online"),
         Runner(id: 2, description: "Runner 2", active: true, online: false, status: "Offline"),
         Runner(id: 3, description: "Runner 3", active: false, online: true, status: "Paused")]
+    @State(initialValue: RunnerToModifyInfo()) private static var runnerToModifyHolder: RunnerToModifyInfo
     static var previews: some View {
         NavigationView {
             List {
-                RunnerListView(runnerList: runners)
+                RunnerListView(runnerList: runners, runnerToModifyHolderBinding: runnerToModifyHolder)
             }.navigationBarTitle("Runners")
         }
     }

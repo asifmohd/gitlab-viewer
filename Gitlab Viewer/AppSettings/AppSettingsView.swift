@@ -18,6 +18,20 @@ struct AppSettingsView: View {
     @EnvironmentObject var appSettings: AppSettings
     private let state: UUID = UUID()
     private let scope: String = "api"
+
+    init() {
+        guard let baseURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.baseURL),
+            let clientId = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientId),
+            let clientSecret = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientSecret),
+            let redirectURI = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.redirectURI) else {
+            return
+        }
+        self.instanceURL = baseURL
+        self.clientId = clientId
+        self.clientSecret = clientSecret
+        self.redirectURI = redirectURI
+    }
+
     var body: some View {
         NavigationView {
             Form {
@@ -51,7 +65,16 @@ struct AppSettingsView: View {
                         }.disabled(self.instanceURL.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty || self.clientId.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty  || self.clientSecret.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty || self.redirectURI.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty)
                     }
                 }.onAppear {
-                    print("")
+                    guard let baseURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.baseURL),
+                        let clientId = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientId),
+                        let clientSecret = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientSecret),
+                        let redirectURI = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.redirectURI) else {
+                        return
+                    }
+                    self.instanceURL = baseURL
+                    self.clientId = clientId
+                    self.clientSecret = clientSecret
+                    self.redirectURI = redirectURI
                 }
             }
         }.navigationBarTitle("Settings")

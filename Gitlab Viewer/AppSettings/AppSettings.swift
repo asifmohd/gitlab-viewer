@@ -15,6 +15,14 @@ enum AppSettingsError: Error {
     case oauthErrorDataIsNil
 }
 
+struct GitlabUserDefaultKeys {
+    static let baseURL: String = "gitlab_base_url"
+    static let authToken: String = "gitlab_auth_token"
+    static let clientId: String = "gitlab_client_id"
+    static let clientSecret: String = "gitlab_client_secret"
+    static let redirectURI: String = "gitlab_redirect_uri"
+}
+
 struct GitlabOAuthResponse: Codable {
     let accessToken: String
 }
@@ -24,11 +32,11 @@ class AppSettings: ObservableObject {
     private(set) var gitlabOAuthInfo: GitlabOAuthInfo?
 
     init() {
-        guard let baseURL: String = UserDefaults.standard.string(forKey: "gitlab_base_url"),
-            let authToken: String = UserDefaults.standard.string(forKey: "gitlab_auth_token"),
-            let clientId = UserDefaults.standard.string(forKey: "gitlab_client_id"),
-            let clientSecret = UserDefaults.standard.string(forKey: "gitlab_client_secret"),
-            let redirectURI = UserDefaults.standard.string(forKey: "gitlab_redirect_uri") else {
+        guard let baseURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.baseURL),
+            let authToken: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.authToken),
+            let clientId = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientId),
+            let clientSecret = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientSecret),
+            let redirectURI = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.redirectURI) else {
             return
         }
         gitlabAPI = GitlabAPIWrapper(connectionInfo: GitlabConnectionInfo(baseURL: baseURL, authToken: authToken))
@@ -59,6 +67,7 @@ class AppSettings: ObservableObject {
             guard let oAuthResponse = try? decoder.decode(GitlabOAuthResponse.self, from: data) else {
                 return
             }
+            UserDefaults.standard.set(oAuthResponse.accessToken, forKey: GitlabUserDefaultKeys.authToken)
             let connectionInfo = GitlabConnectionInfo(baseURL: gitlabOAuthInfo.baseURL, authToken: oAuthResponse.accessToken)
             self?.gitlabAPI = GitlabAPIWrapper(connectionInfo: connectionInfo)
         })
@@ -67,5 +76,10 @@ class AppSettings: ObservableObject {
 
     func setOAuthInfo(gitlabOAuthInfo: GitlabOAuthInfo) {
         self.gitlabOAuthInfo = gitlabOAuthInfo
+        UserDefaults.standard.set(gitlabOAuthInfo.baseURL, forKey: GitlabUserDefaultKeys.baseURL)
+        UserDefaults.standard.set(gitlabOAuthInfo.clientId, forKey: GitlabUserDefaultKeys.clientId)
+        UserDefaults.standard.set(gitlabOAuthInfo.clientSecret, forKey: GitlabUserDefaultKeys.clientSecret)
+        UserDefaults.standard.set(gitlabOAuthInfo.redirectURI, forKey: GitlabUserDefaultKeys.redirectURI)
+
     }
 }

@@ -17,6 +17,8 @@ struct MainMenuCell: View {
 }
 
 struct MainMenu: View {
+    @State(initialValue: false) private var showSettings: Bool
+    @EnvironmentObject var appSettings: AppSettings
     var body: some View {
         List {
             NavigationLink(destination: GroupsView()) {
@@ -26,6 +28,20 @@ struct MainMenu: View {
                 Text("Runners")
             }
         }.navigationBarTitle("Gitlab Viewer")
+            .navigationBarItems(trailing:
+                Button(action: {
+                    self.showSettings = true
+                }) {
+                    HStack {
+                        Image(systemName: "gear")
+                    }
+                }
+        ).sheet(isPresented: $showSettings, onDismiss: {
+            self.showSettings = false
+        }) {
+            AppSettingsView()
+                .environmentObject(self.appSettings)
+        }
     }
 }
 

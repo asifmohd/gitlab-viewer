@@ -61,10 +61,10 @@ struct ProjectsList: View {
         if let nextPageLink = self.nextPageLink {
             urlString = nextPageLink
         } else if let groupId = self.group {
-            urlString = "\(self.appSettings.gitlabAPI.config.baseURL)/groups/\(groupId)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
+            urlString = "\(self.appSettings.gitlabAPI.connectionInfo.baseURL)/groups/\(groupId)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         } else {
             // default to all projects if groupId does not exist
-            urlString = "\(self.appSettings.gitlabAPI.config.baseURL)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
+            urlString = "\(self.appSettings.gitlabAPI.connectionInfo.baseURL)/projects?pagination=keyset&per_page=50&order_by=id&sort=asc"
         }
         guard let url = URL(string: urlString) else {
             assertionFailure("Invalid url")
@@ -72,7 +72,7 @@ struct ProjectsList: View {
         }
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.appSettings.gitlabAPI.config.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue(self.appSettings.gitlabAPI.connectionInfo.authToken, forHTTPHeaderField: "Private-Token")
         self.isLoading = true
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {

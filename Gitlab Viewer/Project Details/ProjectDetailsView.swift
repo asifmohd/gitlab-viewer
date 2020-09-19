@@ -25,13 +25,13 @@ struct ProjectDetailsView: View {
     }
 
     func loadData() {
-        guard let url = URL(string: "\(self.appSettings.gitlabAPI.config.baseURL)/projects/\(self.project.id)/merge_requests") else {
+        guard let url = URL(string: "\(self.appSettings.gitlabAPI.connectionInfo.baseURL)/projects/\(self.project.id)/merge_requests") else {
             assertionFailure("Invalid url")
             return
         }
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.setValue(self.appSettings.gitlabAPI.config.authToken, forHTTPHeaderField: "Private-Token")
+        urlRequest.setValue(self.appSettings.gitlabAPI.connectionInfo.authToken, forHTTPHeaderField: "Private-Token")
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             guard error == nil, let dataU = data else {
                 print(error as Any)

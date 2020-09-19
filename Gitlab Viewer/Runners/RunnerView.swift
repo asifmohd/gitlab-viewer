@@ -68,14 +68,20 @@ struct RunnerStatusView: View {
 }
 
 struct RunnerCellView: View {
+    @Binding var displayMode: UInt
     var runnerToModifyHolder: RunnerToModifyInfo
     let runner: Runner
 
     private func buttonActionText() -> String {
-        if runner.active {
-            return "Disable"
-        } else {
-            return "Enable"
+        switch RunnerListView.DisplayMode(rawValue: self.displayMode)! {
+        case .modify:
+            if runner.active {
+                return "Disable"
+            } else {
+                return "Enable"
+            }
+        case .details:
+            return ""
         }
     }
 
@@ -87,7 +93,12 @@ struct RunnerCellView: View {
                 Text("\(runner.status)")
                 Spacer()
                 Button(self.buttonActionText()) {
-                    self.runnerToModifyHolder.runnerToModify = .runner(id: self.runner.id, active: !self.runner.active)
+                    switch RunnerListView.DisplayMode(rawValue: self.displayMode)! {
+                    case .modify:
+                        self.runnerToModifyHolder.runnerToModify = .runner(id: self.runner.id, active: !self.runner.active)
+                    case .details:
+                        break
+                    }
                 }.padding(.trailing, 20)
             }
         }
@@ -96,11 +107,24 @@ struct RunnerCellView: View {
 }
 
 struct RunnerListView: View {
+
+    enum DisplayMode: UInt {
+        case modify
+        case details
+    }
+
+    @State private var mode = DisplayMode.modify.rawValue
     let runnerList: [Runner]
     var runnerToModifyHolderBinding: RunnerToModifyInfo
     var body: some View {
-        ForEach(runnerList) { (runner) in
-            RunnerCellView(runnerToModifyHolder: self.runnerToModifyHolderBinding, runner: runner)
+        VStack {
+            Picker(selection: $mode, label: Text("Select a display mode")) {
+                Text("Modify").tag(DisplayMode.modify.rawValue)
+                Text("View Details").tag(DisplayMode.details.rawValue)
+            }.pickerStyle(SegmentedPickerStyle())
+            ForEach(runnerList) { (runner) in
+                RunnerCellView(displayMode: self.$mode, runnerToModifyHolder: self.runnerToModifyHolderBinding, runner: runner)
+            }
         }
     }
 }

@@ -59,6 +59,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        let oauthsuccessCode = URLContexts.filter({
+            $0.url.host == "oauthsuccess"
+        })
+        if let firstURLWithSuccess = oauthsuccessCode.first,
+            let code = firstURLWithSuccess.url.queryParams()["code"] {
+            do {
+                try self.appSettings.getAuthToken(from: code)
+            } catch {
+                print(error)
+            }
+        }
+    }
 
 }
 

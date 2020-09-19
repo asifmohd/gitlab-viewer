@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E01AF49E24A8B610005DA7F3 /* CustomExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01AF49D24A8B610005DA7F3 /* CustomExtensions.swift */; };
 		E0250A23249D72A000F295E3 /* RunnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0250A22249D72A000F295E3 /* RunnerView.swift */; };
 		E02BE0B224549A2F00FC0489 /* GroupsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B124549A2F00FC0489 /* GroupsModel.swift */; };
 		E02BE0B42455787900FC0489 /* GitlabAPIWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E01AF49D24A8B610005DA7F3 /* CustomExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomExtensions.swift; sourceTree = "<group>"; };
 		E0250A22249D72A000F295E3 /* RunnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerView.swift; sourceTree = "<group>"; };
 		E02BE0B124549A2F00FC0489 /* GroupsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsModel.swift; sourceTree = "<group>"; };
 		E02BE0B32455787900FC0489 /* GitlabAPIWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitlabAPIWrapper.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				E09A3ED02437BFF4009D23C4 /* Preview Content */,
 				E09A3EDC2437C04E009D23C4 /* Gitlab_configs.plist */,
 				E09675792438EE13001E6BB5 /* WrappedViews.swift */,
+				E01AF49D24A8B610005DA7F3 /* CustomExtensions.swift */,
 			);
 			path = "Gitlab Viewer";
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				E096757A2438EE13001E6BB5 /* WrappedViews.swift in Sources */,
 				E02BE0C324557C6200FC0489 /* GitlabConfigModel.swift in Sources */,
 				E02BE0C024557C1600FC0489 /* ProjectDetailsView.swift in Sources */,
+				E01AF49E24A8B610005DA7F3 /* CustomExtensions.swift in Sources */,
 				E0250A23249D72A000F295E3 /* RunnerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

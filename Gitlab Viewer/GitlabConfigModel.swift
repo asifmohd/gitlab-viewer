@@ -11,6 +11,11 @@ import Foundation
 struct GitlabConnectionInfo {
     let baseURL: String
     let authToken: String
+
+    init(instanceURL: String, authToken: String) {
+        self.baseURL = [instanceURL, "/api/v4"].joined()
+        self.authToken = authToken
+    }
 }
 
 struct GitlabConfig: Codable {
@@ -24,7 +29,7 @@ struct GitlabConfig: Codable {
 }
 
 struct GitlabOAuthInfo {
-    let baseURL: String
+    let instanceURL: String
     let clientId: String
     let clientSecret: String
     let redirectURI: String

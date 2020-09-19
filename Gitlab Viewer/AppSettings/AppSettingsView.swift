@@ -20,7 +20,7 @@ struct AppSettingsView: View {
     private let scope: String = "api"
 
     init() {
-        guard let baseURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.baseURL),
+        guard let baseURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.instanceURL),
             let clientId = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientId),
             let clientSecret = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientSecret),
             let redirectURI = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.redirectURI) else {
@@ -60,18 +60,18 @@ struct AppSettingsView: View {
                     }
                     Section {
                         Button("Connect") {
-                            self.appSettings.setOAuthInfo(gitlabOAuthInfo: GitlabOAuthInfo(baseURL: self.instanceURL, clientId: self.clientId, clientSecret: self.clientSecret, redirectURI: self.redirectURI))
+                            self.appSettings.setOAuthInfo(gitlabOAuthInfo: GitlabOAuthInfo(instanceURL: self.instanceURL, clientId: self.clientId, clientSecret: self.clientSecret, redirectURI: self.redirectURI))
                             UIApplication.shared.open(URL(string: "\(self.instanceURL)/oauth/authorize?client_id=\(self.clientId)&redirect_uri=\(self.redirectURI)&response_type=code&state=\(self.state.uuidString)&scope=\(self.scope)")!)
                         }.disabled(self.instanceURL.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty || self.clientId.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty  || self.clientSecret.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty || self.redirectURI.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty)
                     }
                 }.onAppear {
-                    guard let baseURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.baseURL),
+                    guard let instanceURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.instanceURL),
                         let clientId = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientId),
                         let clientSecret = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientSecret),
                         let redirectURI = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.redirectURI) else {
                         return
                     }
-                    self.instanceURL = baseURL
+                    self.instanceURL = instanceURL
                     self.clientId = clientId
                     self.clientSecret = clientSecret
                     self.redirectURI = redirectURI

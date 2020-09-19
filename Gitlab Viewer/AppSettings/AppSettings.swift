@@ -16,7 +16,7 @@ enum AppSettingsError: Error {
 }
 
 struct GitlabUserDefaultKeys {
-    static let baseURL: String = "gitlab_base_url"
+    static let instanceURL: String = "gitlab_instance_url"
     static let authToken: String = "gitlab_auth_token"
     static let clientId: String = "gitlab_client_id"
     static let clientSecret: String = "gitlab_client_secret"
@@ -32,22 +32,22 @@ class AppSettings: ObservableObject {
     private(set) var gitlabOAuthInfo: GitlabOAuthInfo?
 
     init() {
-        guard let baseURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.baseURL),
+        guard let instanceURL: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.instanceURL),
             let authToken: String = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.authToken),
             let clientId = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientId),
             let clientSecret = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.clientSecret),
             let redirectURI = UserDefaults.standard.string(forKey: GitlabUserDefaultKeys.redirectURI) else {
             return
         }
-        gitlabAPI = GitlabAPIWrapper(connectionInfo: GitlabConnectionInfo(baseURL: baseURL, authToken: authToken))
-        gitlabOAuthInfo = GitlabOAuthInfo(baseURL: baseURL, clientId: clientId, clientSecret: clientSecret, redirectURI: redirectURI)
+        gitlabAPI = GitlabAPIWrapper(connectionInfo: GitlabConnectionInfo(instanceURL: instanceURL, authToken: authToken))
+        gitlabOAuthInfo = GitlabOAuthInfo(instanceURL: instanceURL, clientId: clientId, clientSecret: clientSecret, redirectURI: redirectURI)
     }
 
     func getAuthToken(from code: String) throws {
         guard let gitlabOAuthInfo = gitlabOAuthInfo else {
             throw AppSettingsError.oauthInfoNotFound
         }
-        guard let url = URL(string: "\(gitlabOAuthInfo.baseURL)/oauth/token") else {
+        guard let url = URL(string: "\(gitlabOAuthInfo.instanceURL)/oauth/token") else {
             throw AppSettingsError.invalidInstanceURL
         }
 
@@ -68,7 +68,7 @@ class AppSettings: ObservableObject {
                 return
             }
             UserDefaults.standard.set(oAuthResponse.accessToken, forKey: GitlabUserDefaultKeys.authToken)
-            let connectionInfo = GitlabConnectionInfo(baseURL: gitlabOAuthInfo.baseURL, authToken: oAuthResponse.accessToken)
+            let connectionInfo = GitlabConnectionInfo(instanceURL: gitlabOAuthInfo.instanceURL, authToken: oAuthResponse.accessToken)
             self?.gitlabAPI = GitlabAPIWrapper(connectionInfo: connectionInfo)
         })
         request.resume()
@@ -76,7 +76,7 @@ class AppSettings: ObservableObject {
 
     func setOAuthInfo(gitlabOAuthInfo: GitlabOAuthInfo) {
         self.gitlabOAuthInfo = gitlabOAuthInfo
-        UserDefaults.standard.set(gitlabOAuthInfo.baseURL, forKey: GitlabUserDefaultKeys.baseURL)
+        UserDefaults.standard.set(gitlabOAuthInfo.instanceURL, forKey: GitlabUserDefaultKeys.instanceURL)
         UserDefaults.standard.set(gitlabOAuthInfo.clientId, forKey: GitlabUserDefaultKeys.clientId)
         UserDefaults.standard.set(gitlabOAuthInfo.clientSecret, forKey: GitlabUserDefaultKeys.clientSecret)
         UserDefaults.standard.set(gitlabOAuthInfo.redirectURI, forKey: GitlabUserDefaultKeys.redirectURI)

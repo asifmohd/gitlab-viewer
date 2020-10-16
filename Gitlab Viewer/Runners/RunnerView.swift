@@ -67,23 +67,32 @@ struct RunnerStatusView: View {
     }
 }
 
-struct RunnerCellView: View {
-    @Binding var displayMode: UInt
+struct RunnerCellModifyRunnerView: View {
     var runnerToModifyHolder: RunnerToModifyInfo
     let runner: Runner
 
     private func buttonActionText() -> String {
-        switch RunnerListView.DisplayMode(rawValue: self.displayMode)! {
-        case .modify:
-            if runner.active {
-                return "Disable"
-            } else {
-                return "Enable"
-            }
-        case .details:
-            return ""
+        if runner.active {
+            return "Tap to disable"
+        } else {
+            return "Tap to enable"
         }
     }
+
+    var body: some View {
+            HStack {
+                RunnerListCellSkeletonView(runner: runner)
+                Spacer()
+                Button(self.buttonActionText()) {
+                    self.runnerToModifyHolder.runnerToModify = .runner(id: self.runner.id, active: !self.runner.active)
+                }.padding(.trailing, 20)
+                .padding(.top, 26)
+            }
+    }
+}
+
+struct RunnerListCellSkeletonView: View {
+    let runner: Runner
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -91,18 +100,8 @@ struct RunnerCellView: View {
             HStack {
                 RunnerStatusView(mode: RunnerStatusView.Mode(active: runner.active, online: runner.online))
                 Text("\(runner.status)")
-                Spacer()
-                Button(self.buttonActionText()) {
-                    switch RunnerListView.DisplayMode(rawValue: self.displayMode)! {
-                    case .modify:
-                        self.runnerToModifyHolder.runnerToModify = .runner(id: self.runner.id, active: !self.runner.active)
-                    case .details:
-                        break
-                    }
-                }.padding(.trailing, 20)
             }
         }
-
     }
 }
 
@@ -122,8 +121,19 @@ struct RunnerListView: View {
                 Text("Modify").tag(DisplayMode.modify.rawValue)
                 Text("View Details").tag(DisplayMode.details.rawValue)
             }.pickerStyle(SegmentedPickerStyle())
-            List(runnerList) { runner in
-                RunnerCellView(displayMode: self.$mode, runnerToModifyHolder: self.runnerToModifyHolderBinding, runner: runner)
+            VStack {
+                if self.mode == DisplayMode.modify.rawValue {
+                    List(runnerList) { runner in
+                        RunnerCellModifyRunnerView(runnerToModifyHolder: self.runnerToModifyHolderBinding, runner: runner)
+                    }
+                } else {
+                    List(runnerList) { runner in
+                        NavigationLink(
+                            destination: RunnerDetailView(runner: runner)) {
+                            RunnerListCellSkeletonView(runner: runner)
+                        }
+                    }
+                }
             }
         }.navigationBarTitle("Runners")
     }

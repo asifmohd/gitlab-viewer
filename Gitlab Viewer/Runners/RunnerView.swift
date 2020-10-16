@@ -176,7 +176,7 @@ struct RunnerView: View {
             }
         }.onAppear {
             self.runnerViewAPIHolder.cancellable = self.appSettings.gitlabAPI.runnerAPI.publisher.sink(receiveValue: { (runners) in
-                self.runnerList = runners
+                self.runnerList = runners.sorted(by: { $0.online && !$1.online }) // move offline runners to the end of the list
                 self.isLoading = false
             })
         }
@@ -192,9 +192,7 @@ struct RunnerView_Preview: PreviewProvider {
     @State(initialValue: RunnerToModifyInfo()) private static var runnerToModifyHolder: RunnerToModifyInfo
     static var previews: some View {
         NavigationView {
-            List {
-                RunnerListView(runnerList: runners, runnerToModifyHolderBinding: runnerToModifyHolder)
-            }.navigationBarTitle("Runners")
+            RunnerListView(runnerList: runners.sorted(by: { $0.online && !$1.online }), runnerToModifyHolderBinding: runnerToModifyHolder)
         }
     }
 }

@@ -122,10 +122,10 @@ struct RunnerListView: View {
                 Text("Modify").tag(DisplayMode.modify.rawValue)
                 Text("View Details").tag(DisplayMode.details.rawValue)
             }.pickerStyle(SegmentedPickerStyle())
-            ForEach(runnerList) { (runner) in
+            List(runnerList) { runner in
                 RunnerCellView(displayMode: self.$mode, runnerToModifyHolder: self.runnerToModifyHolderBinding, runner: runner)
             }
-        }
+        }.navigationBarTitle("Runners")
     }
 }
 
@@ -145,18 +145,18 @@ struct RunnerView: View {
     let runnerViewAPIHolder: RunnerViewAPIHolder = RunnerViewAPIHolder()
 
     var body: some View {
-        List {
+        VStack {
             if self.isLoading {
                 HStack {
                     Spacer()
                     Text("Loading runner information")
                     ActivityIndicator(isAnimating: $isLoading, style: .medium)
                     Spacer()
-                }
+                }.navigationBarTitle("Runners")
             } else {
                 RunnerListView(runnerList: runnerList, runnerToModifyHolderBinding: modifyRunnerStateButtonTapped)
             }
-        }.navigationBarTitle("Runners")
+        }
             .onReceive(appSettings.gitlabAPI.modifyRunnerAPI.publisher) { (runner) in
                 guard let index = self.runnerList.firstIndex(where: { $0.id == runner.id }) else {
                     assertionFailure("Could not find runner which was being modified")

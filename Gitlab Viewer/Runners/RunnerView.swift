@@ -22,13 +22,6 @@ enum RunnerToModify {
     case none
 }
 
-struct RunnerDetailView: View {
-    let runner: Runner
-    var body: some View {
-        Text(runner.description)
-    }
-}
-
 struct RunnerStatusView: View {
     enum Mode {
         case active(online: Bool)

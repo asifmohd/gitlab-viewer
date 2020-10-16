@@ -26,6 +26,7 @@
 		E09A3ED22437BFF4009D23C4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E09A3ED12437BFF4009D23C4 /* Preview Assets.xcassets */; };
 		E09A3ED52437BFF4009D23C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E09A3ED32437BFF4009D23C4 /* LaunchScreen.storyboard */; };
 		E09A3EDD2437C04E009D23C4 /* Gitlab_configs.plist in Resources */ = {isa = PBXBuildFile; fileRef = E09A3EDC2437C04E009D23C4 /* Gitlab_configs.plist */; };
+		E0FEFE2D253A4CD200B46E9A /* RunnerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FEFE2C253A4CD200B46E9A /* RunnerDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		E09A3ED42437BFF4009D23C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E09A3ED62437BFF4009D23C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E09A3EDC2437C04E009D23C4 /* Gitlab_configs.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Gitlab_configs.plist; sourceTree = "<group>"; };
+		E0FEFE2C253A4CD200B46E9A /* RunnerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				E0250A22249D72A000F295E3 /* RunnerView.swift */,
+				E0FEFE2C253A4CD200B46E9A /* RunnerDetailView.swift */,
 			);
 			path = Runners;
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 				E02BE0BB24557B4000FC0489 /* ProjectModel.swift in Sources */,
 				E02BE0B42455787900FC0489 /* GitlabAPIWrapper.swift in Sources */,
 				E02BE0BE24557C0000FC0489 /* MergeRequestModel.swift in Sources */,
+				E0FEFE2D253A4CD200B46E9A /* RunnerDetailView.swift in Sources */,
 				E02BE0B624557AC200FC0489 /* GroupsView.swift in Sources */,
 				E02BE0B924557B2500FC0489 /* ProjectsListView.swift in Sources */,
 				E096757A2438EE13001E6BB5 /* WrappedViews.swift in Sources */,
